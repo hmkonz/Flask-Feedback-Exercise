@@ -128,9 +128,10 @@ def add_feedback(username):
             content=content,
             username=username,
         )
-
+        
         db.session.add(feedback)
         db.session.commit()
+        flash("Feedback Created!", 'success')
 
         return redirect(f"/users/{feedback.username}")
 
@@ -138,7 +139,31 @@ def add_feedback(username):
     else:
         return render_template('feedback_form.html', form=form)
 
+@app.route('/users/<username>/delete', methods = ["POST"])
+def delete_user(username):
+    """Delete a user from the database and redirect to login page"""
 
+    if "username" not in session or username != session['username']:
+        flash ("You must be logged in to view this page")                          
+        return redirect ("/")
+
+    user = User.query.get(username)
+
+    db.session.delete(user)
+    db.session.commit()
+    session.pop("username")
+    flash("User deleted!", "danger")
+
+    return redirect('/')
+
+
+
+
+   
+  
+
+  
+        
 
 
 
