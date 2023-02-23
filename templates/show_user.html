@@ -32,14 +32,17 @@ content %}
     </span>
     
 
-    <p>
-      <a href="/users/{{ user.username }}/feedback/add" class="btn btn-primary">
-        Add feedback
-      </a></p>
-    <p>
-      <a href="/users/{{ user.username }}/delete" class="btn btn-danger" method="POST"
-        >Delete User</a
-      ></p>
+  
+      <form action="/users/{{ user.username }}/feedback/add" >
+        {{form.hidden_tag()}}
+        <button class="btn btn-primary btn-sm">Add Feedback</button>
+    </form>
+    <br>
+    <form action="/users/{{ user.username }}/delete" method="POST">
+        {{form.hidden_tag()}}
+        <button class="btn btn-danger btn-sm">Delete User</button>
+    </form>  
+    
     
     
   </div>

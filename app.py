@@ -139,7 +139,7 @@ def add_feedback(username):
 def delete_user(username):
     """Delete a user from the database and redirect to login page"""
 
-    if "username" not in session or username != session['username']:
+    if "username" not in session:
         flash ("You must be logged in to view this page")                          
         return redirect ("/")
 
