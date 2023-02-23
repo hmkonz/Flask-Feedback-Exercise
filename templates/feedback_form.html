@@ -1,7 +1,7 @@
 {% extends 'base.html' %} {% block title %} Add Feedback {% endblock %} {% block
 content %}
 
-<h1 class="display-1">Add Feedback</h1>
+<h1 class="display-1">{{title}} Feedback</h1>
 
 <form method="POST">
   {{form.hidden_tag()}} {% for field in form if field.widget.input_type
@@ -15,7 +15,7 @@ content %}
   </p>
   {% endfor %}
 
-  <button class="btn btn-primary" type="submit">Add Feedback</button>
+  <button class="btn btn-primary" type="submit">{{title}} Feedback</button>
 </form>
 
 {% endblock %}

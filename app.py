@@ -96,7 +96,7 @@ def logout_user():
 def show_user(username):   
     """Show a page with info on a specific user. Must be logged in to see this page"""  
    
-    if "username" not in session:
+    if "username" not in session or username != session['username']:
         flash ("You must be logged in to view this page")                          
         return redirect ("/")
 
@@ -111,7 +111,7 @@ def show_user(username):
 def add_feedback(username):
     """Show a form to add feedback if a GET request. Handle form if a POST request. Must be logged in to see this page"""
 
-    if "username" not in session:
+    if "username" not in session or username != session['username']:
         flash ("You must be logged in to view this page")                          
         return redirect ("/")
 
@@ -123,11 +123,7 @@ def add_feedback(username):
         title = form.title.data
         content = form.content.data
 
-        feedback = Feedback(
-            title=title,
-            content=content,
-            username=username,
-        )
+        feedback = Feedback(title=title, content=content, username=username)
         
         db.session.add(feedback)
         db.session.commit()
@@ -137,9 +133,9 @@ def add_feedback(username):
 
     # else return template if a GET request or if token is invalid
     else:
-        return render_template('feedback_form.html', form=form)
+        return render_template('feedback_form.html', form=form, title="Add")
 
-@app.route('/users/<username>/delete', methods = ["POST"])
+@app.route('/users/<username>/delete', methods=["POST"])
 def delete_user(username):
     """Delete a user from the database and redirect to login page"""
 
@@ -157,7 +153,58 @@ def delete_user(username):
     return redirect('/')
 
 
+@app.route('/feedback/<int:feedback_id>/update', methods=["GET", "POST"])
+def update_feedback(feedback_id):
+    """Show a form to edit feedback and process it"""
 
+    if "username" not in session:
+        flash ("You must be logged in to view this page")                          
+        return redirect ("/")
+
+
+    feedback=Feedback.query.get_or_404(feedback_id)
+
+    form=FeedbackForm(obj=feedback)
+   
+    # execute the following if a POST request AND token is valid 
+    if form.validate_on_submit():
+        feedback.title = form.title.data
+        feedback.content = form.content.data
+
+        db.session.commit()
+        flash("Feedback Updated!", 'success')
+
+        return redirect(f"/users/{feedback.username}")
+
+    # else return template if a GET request or if token is invalid
+    else:
+        return render_template('feedback_form.html', form=form, feedback=feedback, title="Edit")
+
+
+   
+@app.route('/feedback/<int:feedback_id>/delete', methods=["POST"])
+def delete_feedback(feedback_id):
+    """Delete a user's specific feedback and redirect to user's page"""
+
+    if "username" not in session:
+        flash ("You must be logged in to view this page")                          
+        return redirect ("/")
+
+
+    feedback = Feedback.query.get(feedback_id)
+    
+    db.session.delete(feedback)
+    db.session.commit()
+   
+    flash("Feedback deleted!", "danger")
+
+    return redirect(f"/users/{feedback.username}")
+  
+
+
+
+
+   
 
    
   
